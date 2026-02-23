@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { TeaStall } from '@/data/sampleStalls';
+import { TeaStallDisplay } from '@/components/StallCard';
 
 interface MapViewProps {
-  stalls: TeaStall[];
+  stalls: TeaStallDisplay[];
   className?: string;
 }
 
