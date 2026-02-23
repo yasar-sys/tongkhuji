@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { TeaStallDisplay } from '@/components/StallCard';
 
+import { useNavigate } from 'react-router-dom';
+
 interface MapViewProps {
   stalls: TeaStallDisplay[];
   className?: string;
@@ -9,6 +11,7 @@ interface MapViewProps {
 
 const MapView = ({ stalls, className = '' }: MapViewProps) => {
   const { lang, t } = useLanguage();
+  const navigate = useNavigate();
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const [loaded, setLoaded] = useState(false);
@@ -48,6 +51,17 @@ const MapView = ({ stalls, className = '' }: MapViewProps) => {
       };
 
       L.control.layers(baseMaps).addTo(map);
+
+      // Add click listener for adding Tongs
+      // Note: we can't use useNavigate here directly as it's not a hook top-level,
+      // but we can pass it down or use a safer approach for this legacy MapView structure.
+      // Since it's inside useEffect, we'll use window.location or similar if needed,
+      // but better to use a ref to the navigate function if we want to be clean.
+
+      map.on('click', (e: any) => {
+        const { lat, lng } = e.latlng;
+        navigate(`/add-stall?lat=${lat}&lng=${lng}`);
+      });
 
       const teaIcon = L.divIcon({
         html: '<div style="font-size:28px;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3))">🍵</div>',

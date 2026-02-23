@@ -37,6 +37,28 @@ TongBD is a platform to explore and locate tea stalls (Tongs) across Bangladesh.
    npm run dev
    ```
 
+## Creator
+
+This project was created by **Samin Yasar Sunny**.
+
+## Roadmap
+
+### Phase 1: Foundation (Completed)
+- [x] Tong Listing and Map Integration
+- [x] Multilingual Support (Bangla & English)
+- [x] User Authentication via Supabase
+- [x] PWA Setup for Mobile
+
+### Phase 2: Interactivity (Current)
+- [x] Add Tong by clicking on the Map
+- [x] Enhanced Map Views (Road, Satellite, Topology)
+
+### Phase 3: Community & Social (Coming Soon)
+- [ ] Photo Uploads for Tongs
+- [ ] User Reviews & Ratings
+- [ ] Favorite Tongs List
+- [ ] Direction Integration (Google Maps/Apple Maps)
+
 ## Deployment
 
-This project can be deployed to Vercel or any other static hosting provider.
+This project is deployed to Vercel.

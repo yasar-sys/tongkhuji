@@ -28,15 +28,22 @@ const Navbar = () => {
           <span className="text-xl font-bold text-primary">{t('appName')}</span>
         </Link>
 
-        <div className="hidden md:flex items-center gap-1">
-          {navLinks.map(link => (
-            <Link key={link.path} to={link.path}>
-              <Button variant={isActive(link.path) ? 'default' : 'ghost'} size="sm" className="font-bangla">
-                {link.icon}
-                {link.label}
-              </Button>
-            </Link>
-          ))}
+        <div className="hidden md:flex items-center gap-4">
+          <div className="flex flex-center gap-1">
+            {navLinks.map(link => (
+              <Link key={link.path} to={link.path}>
+                <Button variant={isActive(link.path) ? 'default' : 'ghost'} size="sm" className="font-bangla">
+                  {link.icon}
+                  {link.label}
+                </Button>
+              </Link>
+            ))}
+          </div>
+          <div className="h-6 w-[1px] bg-border mx-2" />
+          <div className="flex flex-col items-end leading-none">
+            <span className="text-[10px] text-muted-foreground">By</span>
+            <span className="text-xs font-semibold text-primary">Samin Yasar Sunny</span>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
@@ -95,6 +102,10 @@ const Navbar = () => {
             </div>
           </motion.div>
         )}
+        <div className="flex flex-col items-center gap-1 border-t border-border pt-4 mt-2">
+          <p className="text-[10px] text-muted-foreground">Created by</p>
+          <p className="text-xs font-bold text-primary">Samin Yasar Sunny</p>
+        </div>
       </AnimatePresence>
     </nav>
   );

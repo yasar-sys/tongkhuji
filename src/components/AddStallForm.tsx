@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { MapPin, Clock, Camera, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -20,18 +20,28 @@ const AddStallForm = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [facilities, setFacilities] = useState<string[]>([]);
-  
+
   const [form, setForm] = useState({
     name_bn: '', name_en: '', owner_name: '', phone: '',
     division: '', district: '', upazila: '',
     open_time: '06:00', close_time: '22:00',
     tea_price_min: '10', tea_price_max: '30',
     description_bn: '', description_en: '',
-    lat: '23.8103', lng: '90.4125',
+    lat: searchParams.get('lat') || '23.8103',
+    lng: searchParams.get('lng') || '90.4125',
   });
+
+  useEffect(() => {
+    const lat = searchParams.get('lat');
+    const lng = searchParams.get('lng');
+    if (lat && lng) {
+      setForm(prev => ({ ...prev, lat, lng }));
+    }
+  }, [searchParams]);
 
   const updateField = (key: string, value: string) => setForm(prev => ({ ...prev, [key]: value }));
   const toggleFacility = (f: string) => setFacilities(prev => prev.includes(f) ? prev.filter(x => x !== f) : [...prev, f]);
