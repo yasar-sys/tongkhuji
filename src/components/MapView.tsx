@@ -24,9 +24,30 @@ const MapView = ({ stalls, className = '' }: MapViewProps) => {
       const map = L.map(mapRef.current).setView([23.8103, 90.4125], 7);
       mapInstanceRef.current = map;
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      }).addTo(map);
+      // Tile Layers
+      const road = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap',
+      });
+
+      const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '&copy; Esri World Imagery',
+      });
+
+      const topology = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenTopoMap',
+      });
+
+      // Add default layer
+      road.addTo(map);
+
+      // Add Layer Control
+      const baseMaps = {
+        "Road": road,
+        "Satellite": satellite,
+        "Topology": topology
+      };
+
+      L.control.layers(baseMaps).addTo(map);
 
       const teaIcon = L.divIcon({
         html: '<div style="font-size:28px;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3))">🍵</div>',
