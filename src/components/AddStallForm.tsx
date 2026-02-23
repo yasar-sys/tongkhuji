@@ -79,6 +79,23 @@ const AddStallForm = () => {
     if (error) {
       toast({ title: lang === 'bn' ? 'ত্রুটি হয়েছে' : 'Error occurred', description: error.message, variant: 'destructive' });
     } else {
+      // Handle image upload if exists
+      const fileInput = document.getElementById('stall-image') as HTMLInputElement;
+      const file = fileInput?.files?.[0];
+
+      if (file) {
+        const { data: stall } = await supabase.from('tea_stalls').select('id').eq('name_bn', form.name_bn).order('created_at', { ascending: false }).limit(1).single();
+        if (stall) {
+          const fileName = `${stall.id}/${Date.now()}-${file.name}`;
+          const { error: uploadError } = await supabase.storage.from('stall-photos').upload(fileName, file);
+
+          if (!uploadError) {
+            const { data: { publicUrl } } = supabase.storage.from('stall-photos').getPublicUrl(fileName);
+            await supabase.from('stall_images').insert({ stall_id: stall.id, image_url: publicUrl });
+          }
+        }
+      }
+
       queryClient.invalidateQueries({ queryKey: ['tea-stalls'] });
       toast({
         title: lang === 'bn' ? 'সফলভাবে জমা হয়েছে!' : 'Successfully submitted!',
@@ -189,6 +206,11 @@ const AddStallForm = () => {
           <Label className="font-bangla">Longitude</Label>
           <Input type="number" step="any" value={form.lng} onChange={e => updateField('lng', e.target.value)} />
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label className="font-bangla flex items-center gap-1"><Camera className="w-4 h-4" /> {lang === 'bn' ? 'দোকানের ছবি' : 'Stall Photo'}</Label>
+        <Input id="stall-image" type="file" accept="image/*" className="cursor-pointer" />
       </div>
 
       <div className="space-y-3">
