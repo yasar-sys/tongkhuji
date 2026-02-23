@@ -2,7 +2,31 @@ import { motion } from 'framer-motion';
 import { Star, MapPin, Clock, Wifi, Tv, Armchair, Cigarette } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { TeaStall } from '@/data/sampleStalls';
+interface TeaStallDisplay {
+  id: string;
+  name_bn: string;
+  name_en: string;
+  owner_name: string;
+  phone: string;
+  division: string;
+  district: string;
+  upazila: string;
+  lat: number;
+  lng: number;
+  open_time: string;
+  close_time: string;
+  description_bn: string;
+  description_en: string;
+  tea_price_min: number;
+  tea_price_max: number;
+  facilities: string[];
+  rating: number;
+  review_count: number;
+  image_url: string;
+  is_open: boolean;
+}
+
+export type { TeaStallDisplay };
 
 const facilityIcons: Record<string, React.ReactNode> = {
   wifi: <Wifi className="w-3 h-3" />,
@@ -11,7 +35,7 @@ const facilityIcons: Record<string, React.ReactNode> = {
   smoking_zone: <Cigarette className="w-3 h-3" />,
 };
 
-const StallCard = ({ stall, index = 0 }: { stall: TeaStall; index?: number }) => {
+const StallCard = ({ stall, index = 0 }: { stall: TeaStallDisplay; index?: number }) => {
   const { lang, t } = useLanguage();
   const name = lang === 'bn' ? stall.name_bn : stall.name_en;
   const description = lang === 'bn' ? stall.description_bn : stall.description_en;
