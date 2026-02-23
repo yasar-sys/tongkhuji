@@ -18,9 +18,9 @@ export default defineConfig(({ mode }) => ({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
-        name: 'TongBD - Bangladesh Tea Map',
-        short_name: 'TongBD',
-        description: 'Discover the best tea stalls across Bangladesh',
+        name: 'Tong Khuji - চায়ের কাপে দেশ গড়ি',
+        short_name: 'টঙ খুঁজি',
+        description: 'টঙ খুঁজি - বাংলাদেশের সেরা চায়ের দোকানগুলো খুঁজে বের করুন।',
         theme_color: '#F97316',
         icons: [
           {

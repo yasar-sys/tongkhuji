@@ -13,7 +13,8 @@ const Navbar = () => {
   const location = useLocation();
 
   const isMapPage = location.pathname === '/map';
-  const isTransparent = location.pathname === '/' || isMapPage;
+  if (isMapPage) return null;
+  const isTransparent = location.pathname === '/';
 
   const navLinks = [
     { path: '/', label: t('home') },

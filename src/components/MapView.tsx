@@ -124,7 +124,6 @@ const MapView = ({ stalls, className = '' }: MapViewProps) => {
     <div
       ref={mapRef}
       className={`w-full h-full ${className}`}
-      style={{ paddingBottom: '160px' }}
     />
   );
 };

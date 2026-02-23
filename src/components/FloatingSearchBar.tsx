@@ -17,7 +17,7 @@ const FloatingSearchBar = ({ onSearchChange, selectedDivision, onDivisionChange 
     const [filterOpen, setFilterOpen] = useState(false);
 
     return (
-        <div className="absolute top-4 left-4 right-4 z-[2000] pointer-events-none">
+        <div className="w-full pointer-events-none p-4 pb-2">
             <div className="max-w-md mx-auto flex flex-col gap-3 pointer-events-auto">
                 <div className="flex items-center gap-2">
                     <div className="relative flex-1 group">

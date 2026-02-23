@@ -50,15 +50,18 @@ const MapPage = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 pt-16 overflow-hidden bg-background">
-      <div className="relative w-full h-full">
-        <MapView stalls={stalls} className="h-full w-full" />
-
+    <div className="h-screen w-full flex flex-col overflow-hidden bg-background">
+      {/* Search Header */}
+      <div className="z-[2000] border-b border-border/10 bg-background/80 backdrop-blur-md">
         <FloatingSearchBar
           onSearchChange={setSearchQuery}
           selectedDivision={selectedDivision}
           onDivisionChange={setSelectedDivision}
         />
+      </div>
+
+      <div className="relative flex-1 w-full overflow-hidden">
+        <MapView stalls={stalls} className="h-full w-full" />
 
         <FloatingMapControls
           onLocateMe={() => {

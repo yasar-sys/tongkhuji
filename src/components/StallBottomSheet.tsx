@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { motion, useDragControls } from 'framer-motion';
 import { Share2, Navigation, MessageSquare, Star, MapPin } from 'lucide-react';
 import { TeaStallDisplay } from './StallCard';
@@ -13,7 +13,26 @@ interface StallBottomSheetProps {
 
 const StallBottomSheet = ({ stalls, onStallClick }: StallBottomSheetProps) => {
     const { lang, t } = useLanguage();
-    const constraintsRef = useRef(null);
+    const [snapPoint, setSnapPoint] = useState<'collapsed' | 'half' | 'expanded'>('half');
+
+    const variants = {
+        collapsed: { y: 'calc(100% - 80px)' },
+        half: { y: '50%' },
+        expanded: { y: '10%' }
+    };
+
+    const handleDragEnd = (event: any, info: any) => {
+        const velocity = info.velocity.y;
+        const offset = info.offset.y;
+
+        if (velocity > 500 || offset > 100) {
+            if (snapPoint === 'expanded') setSnapPoint('half');
+            else setSnapPoint('collapsed');
+        } else if (velocity < -500 || offset < -100) {
+            if (snapPoint === 'collapsed') setSnapPoint('half');
+            else setSnapPoint('expanded');
+        }
+    };
 
     const listHeader = (
         <div className="flex items-center justify-between py-4 border-b border-border/10">
@@ -36,12 +55,14 @@ const StallBottomSheet = ({ stalls, onStallClick }: StallBottomSheetProps) => {
 
     return (
         <motion.div
-            initial={{ y: '70%' }}
-            animate={{ y: '35%' }}
+            variants={variants}
+            initial="half"
+            animate={snapPoint}
             drag="y"
             dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={0.1}
-            className="absolute bottom-0 left-0 right-0 z-[1001] bg-background/95 backdrop-blur-xl rounded-t-[40px] shadow-[0_-20px_50px_rgba(0,0,0,0.2)] border-t border-border/50 max-h-[90vh] overflow-hidden flex flex-col"
+            dragElastic={0.05}
+            onDragEnd={handleDragEnd}
+            className="absolute bottom-0 left-0 right-0 z-[1001] bg-background/95 backdrop-blur-xl rounded-t-[40px] shadow-[0_-20px_50px_rgba(0,0,0,0.2)] border-t border-border/50 h-[90vh] overflow-hidden flex flex-col transition-shadow duration-300"
         >
             {/* Handle */}
             <div className="w-full flex justify-center pt-3 pb-1 cursor-grab active:cursor-grabbing">
