@@ -24,8 +24,8 @@ interface TeaStallDisplay {
   facilities: string[];
   rating: number;
   review_count: number;
-  image_url: string;
-  is_open: boolean;
+  image_url?: string;
+  is_open?: boolean;
 }
 
 export type { TeaStallDisplay };

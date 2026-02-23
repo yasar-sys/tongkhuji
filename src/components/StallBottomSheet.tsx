@@ -52,7 +52,7 @@ const StallBottomSheet = ({ stalls, onStallClick }: StallBottomSheetProps) => {
                 {listHeader}
 
                 <div className="py-4 space-y-4">
-                    {stalls.map((stall) => (
+                    {stalls.map((stall, index) => (
                         <div
                             key={stall.id}
                             onClick={() => onStallClick?.(stall)}
@@ -60,39 +60,41 @@ const StallBottomSheet = ({ stalls, onStallClick }: StallBottomSheetProps) => {
                         >
                             {/* Thumbnail */}
                             <div className="relative">
-                                <div className="w-20 h-20 rounded-2xl overflow-hidden bg-muted flex items-center justify-center">
+                                <div className="w-20 h-20 rounded-2xl overflow-hidden bg-muted flex items-center justify-center border border-border/50">
                                     {stall.image_url ? (
                                         <img src={stall.image_url} alt={stall.name_bn} className="w-full h-full object-cover" />
                                     ) : (
-                                        <span className="text-3xl">🍵</span>
+                                        <div className="w-full h-full bg-gradient-hero flex items-center justify-center opacity-50">
+                                            <span className="text-3xl">🍵</span>
+                                        </div>
                                     )}
                                 </div>
-                                <div className="absolute -bottom-2 -left-2 bg-primary/10 backdrop-blur-sm px-2 py-0.5 rounded-lg border border-primary/20">
-                                    <span className="text-[10px] font-bold text-primary">1.6km</span>
+                                <div className="absolute -bottom-2 -left-2 bg-background/95 backdrop-blur-sm px-2 py-0.5 rounded-lg border border-border shadow-sm">
+                                    <span className="text-[10px] font-bold text-muted-foreground">{index === 0 ? '1.5km' : index === 1 ? '1.6km' : '2.0km'}</span>
                                 </div>
                             </div>
 
                             {/* Content */}
                             <div className="flex-1 min-w-0">
                                 <div className="flex justify-between items-start gap-2">
-                                    <h3 className="font-bold text-base text-foreground truncate font-bangla leading-tight">
+                                    <h3 className="font-bold text-base text-foreground truncate font-bangla leading-tight pr-8">
                                         {lang === 'bn' ? stall.name_bn : stall.name_en}
                                     </h3>
-                                    <div className="flex items-center gap-1 bg-accent/10 px-2 py-0.5 rounded-lg border border-accent/20">
-                                        <span className="text-[10px] font-bold text-accent">{stall.rating || "4.5"}</span>
+                                    <div className="absolute right-16 top-4 flex items-center gap-1 bg-accent/10 px-2 py-0.5 rounded-lg border border-accent/20">
+                                        <span className="text-[10px] font-bold text-accent">{stall.rating || (3.5 + Math.random() * 1.5).toFixed(1)}</span>
                                     </div>
                                 </div>
 
-                                <p className="text-xs text-muted-foreground truncate mb-2 font-bangla">
+                                <p className="text-[11px] text-muted-foreground truncate mb-2 font-bangla">
                                     {stall.upazila}, {stall.district}
                                 </p>
 
                                 <div className="flex flex-wrap gap-2">
-                                    <div className="flex items-center gap-1 bg-primary/5 text-primary px-2 py-1 rounded-lg text-[10px] font-semibold">
-                                        🍵 {lang === 'bn' ? 'স্পেশাল চা' : 'Special Tea'}
+                                    <div className="flex items-center gap-1 bg-primary/5 text-primary px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider">
+                                        {lang === 'bn' ? 'ফ্রি ওয়াইফাই' : 'Free Wifi'}
                                     </div>
-                                    <div className="flex items-center gap-1 bg-green-500/5 text-green-600 px-2 py-1 rounded-lg text-[10px] font-semibold">
-                                        🕒 {lang === 'bn' ? '২৪ ঘণ্টা' : '24h'}
+                                    <div className="flex items-center gap-1 bg-blue-500/5 text-blue-600 px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider">
+                                        {lang === 'bn' ? '২৪ ঘণ্টা' : '24h'}
                                     </div>
                                 </div>
                             </div>

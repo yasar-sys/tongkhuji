@@ -3,7 +3,11 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-const FloatingSearchBar = () => {
+interface FloatingSearchBarProps {
+    onSearchChange?: (value: string) => void;
+}
+
+const FloatingSearchBar = ({ onSearchChange }: FloatingSearchBarProps) => {
     const { lang, t } = useLanguage();
 
     return (
@@ -16,6 +20,7 @@ const FloatingSearchBar = () => {
                     <Input
                         placeholder={lang === 'bn' ? 'টঙ বা জায়গা খুঁজুন...' : 'Search stalls or places...'}
                         className="w-full h-14 pl-12 pr-4 bg-background/95 backdrop-blur-md border-none shadow-2xl rounded-2xl text-base font-bangla focus-visible:ring-primary/20"
+                        onChange={(e) => onSearchChange?.(e.target.value)}
                     />
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground">
                         <Search className="w-5 h-5" />

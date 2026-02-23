@@ -6,14 +6,17 @@ import StallBottomSheet from '@/components/StallBottomSheet';
 import { useTeaStalls } from '@/hooks/useTeaStalls';
 import { sampleStalls } from '@/data/sampleStalls';
 import { TeaStallDisplay } from '@/components/StallCard';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const MapPage = () => {
+  const { lang } = useLanguage();
   const [selectedDivision] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const { data: dbStalls } = useTeaStalls(selectedDivision);
 
   // Use DB stalls if available, otherwise show sample data
-  const stalls: TeaStallDisplay[] = dbStalls && dbStalls.length > 0
-    ? dbStalls.map(s => ({
+  const rawStalls: TeaStallDisplay[] = dbStalls && dbStalls.length > 0
+    ? dbStalls.map((s: any) => ({
       ...s,
       rating: 4.5, // Default rating as placeholder
       review_count: 12,
@@ -32,6 +35,13 @@ const MapPage = () => {
     }))
     : sampleStalls;
 
+  const stalls = rawStalls.filter(s => {
+    const name = lang === 'bn' ? s.name_bn : s.name_en;
+    const location = `${s.upazila} ${s.district} ${s.division}`;
+    const query = searchQuery.toLowerCase();
+    return name.toLowerCase().includes(query) || location.toLowerCase().includes(query);
+  });
+
   const handleStallClick = useCallback((stall: TeaStallDisplay) => {
     window.location.href = `/map?lat=${stall.lat}&lng=${stall.lng}`;
   }, []);
@@ -41,7 +51,7 @@ const MapPage = () => {
       <div className="relative w-full h-full">
         <MapView stalls={stalls} className="h-full w-full" />
 
-        <FloatingSearchBar />
+        <FloatingSearchBar onSearchChange={setSearchQuery} />
 
         <FloatingMapControls
           onLocateMe={() => {
