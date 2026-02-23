@@ -8,6 +8,8 @@ const BottomNav = () => {
 
     const isActive = (path: string) => location.pathname === path;
 
+    if (location.pathname === '/map') return null;
+
     return (
         <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-t border-border px-4 h-16 flex items-center justify-around md:hidden">
             <Link to="/" className={`flex flex-col items-center gap-1 ${isActive('/') ? 'text-primary' : 'text-muted-foreground'}`}>

@@ -64,11 +64,18 @@ const MapView = ({ stalls, className = '' }: MapViewProps) => {
       });
 
       const teaIcon = L.divIcon({
-        html: '<div style="font-size:28px;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3))">🍵</div>',
+        html: `
+          <div class="relative flex items-center justify-center">
+            <div class="absolute w-8 h-8 bg-white/20 rounded-full animate-ping"></div>
+            <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center border-4 border-white shadow-xl">
+              <div class="w-2 h-2 bg-white rounded-full"></div>
+            </div>
+          </div>
+        `,
         className: '',
         iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32],
+        iconAnchor: [16, 16],
+        popupAnchor: [0, -16],
       });
 
       stalls.forEach(stall => {
@@ -116,8 +123,8 @@ const MapView = ({ stalls, className = '' }: MapViewProps) => {
   return (
     <div
       ref={mapRef}
-      className={`w-full h-full rounded-lg ${className}`}
-      style={{ minHeight: '400px' }}
+      className={`w-full h-full ${className}`}
+      style={{ paddingBottom: '160px' }}
     />
   );
 };
