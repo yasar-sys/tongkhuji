@@ -10,7 +10,12 @@ export const useTeaStalls = (division?: string) => {
     queryFn: async () => {
       let query = supabase
         .from('tea_stalls')
-        .select('*')
+        .select(`
+          *,
+          stall_images (
+            image_url
+          )
+        `)
         .order('created_at', { ascending: false });
 
       if (division && division !== 'all') {
@@ -19,7 +24,11 @@ export const useTeaStalls = (division?: string) => {
 
       const { data, error } = await query;
       if (error) throw error;
-      return data as TeaStallRow[];
+
+      return data.map(stall => ({
+        ...stall,
+        image_url: stall.stall_images?.[0]?.image_url || ''
+      })) as any[];
     },
   });
 };
