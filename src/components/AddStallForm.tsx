@@ -117,120 +117,165 @@ const AddStallForm = () => {
       onSubmit={handleSubmit}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-2xl mx-auto space-y-6"
+      className="max-w-2xl mx-auto space-y-8 pb-20"
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label className="font-bangla">{t('stallNameBn')}</Label>
-          <Input placeholder="যেমন: রহিম চাচার টঙ" className="font-bangla" value={form.name_bn} onChange={e => updateField('name_bn', e.target.value)} required />
+      {/* Basic Info */}
+      <div className="bg-card border border-border/50 rounded-[32px] p-6 md:p-8 space-y-6 shadow-sm">
+        <h2 className="text-xl font-bold font-bangla text-primary flex items-center gap-2">
+          <span className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm">১</span>
+          {lang === 'bn' ? 'সাধারণ তথ্য' : 'Basic Information'}
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label className="font-bangla text-muted-foreground ml-1">{t('stallNameBn')}</Label>
+            <Input placeholder="যেমন: রহিম চাচার টঙ" className="font-bangla h-12 rounded-xl bg-muted/30 border-none focus-visible:ring-primary/20" value={form.name_bn} onChange={e => updateField('name_bn', e.target.value)} required />
+          </div>
+          <div className="space-y-2">
+            <Label className="font-bangla text-muted-foreground ml-1">{t('stallNameEn')}</Label>
+            <Input placeholder="e.g., Rahim Chacha's Tong" className="h-12 rounded-xl bg-muted/30 border-none focus-visible:ring-primary/20" value={form.name_en} onChange={e => updateField('name_en', e.target.value)} required />
+          </div>
         </div>
-        <div className="space-y-2">
-          <Label className="font-bangla">{t('stallNameEn')}</Label>
-          <Input placeholder="e.g., Rahim Chacha's Tong" value={form.name_en} onChange={e => updateField('name_en', e.target.value)} required />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label className="font-bangla text-muted-foreground ml-1">{t('ownerName')}</Label>
+            <Input placeholder={lang === 'bn' ? 'মালিকের নাম লিখুন' : 'Enter owner name'} className="font-bangla h-12 rounded-xl bg-muted/30 border-none focus-visible:ring-primary/20" value={form.owner_name} onChange={e => updateField('owner_name', e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label className="font-bangla text-muted-foreground ml-1">{t('phone')}</Label>
+            <Input placeholder="01XXXXXXXXX" type="tel" className="h-12 rounded-xl bg-muted/30 border-none focus-visible:ring-primary/20" value={form.phone} onChange={e => updateField('phone', e.target.value)} />
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label className="font-bangla">{t('ownerName')}</Label>
-          <Input placeholder={lang === 'bn' ? 'মালিকের নাম লিখুন' : 'Enter owner name'} className="font-bangla" value={form.owner_name} onChange={e => updateField('owner_name', e.target.value)} />
+      {/* Location */}
+      <div className="bg-card border border-border/50 rounded-[32px] p-6 md:p-8 space-y-6 shadow-sm">
+        <h2 className="text-xl font-bold font-bangla text-primary flex items-center gap-2">
+          <span className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm">২</span>
+          {t('division')} ও {t('district')}
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="space-y-2">
+            <Label className="font-bangla text-muted-foreground ml-1">{t('division')}</Label>
+            <Select value={form.division} onValueChange={v => updateField('division', v)} required>
+              <SelectTrigger className="font-bangla h-12 rounded-xl bg-muted/30 border-none focus:ring-primary/20 outline-none"><SelectValue placeholder={t('division')} /></SelectTrigger>
+              <SelectContent className="rounded-2xl border-border/50">
+                {divisions.map(d => (
+                  <SelectItem key={d.en} value={d.en} className="font-bangla focus:bg-primary/10 focus:text-primary">{lang === 'bn' ? d.bn : d.en}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label className="font-bangla text-muted-foreground ml-1">{t('district')}</Label>
+            <Input placeholder={t('district')} className="font-bangla h-12 rounded-xl bg-muted/30 border-none focus-visible:ring-primary/20" value={form.district} onChange={e => updateField('district', e.target.value)} required />
+          </div>
+          <div className="space-y-2">
+            <Label className="font-bangla text-muted-foreground ml-1">{t('upazila')}</Label>
+            <Input placeholder={t('upazila')} className="font-bangla h-12 rounded-xl bg-muted/30 border-none focus-visible:ring-primary/20" value={form.upazila} onChange={e => updateField('upazila', e.target.value)} />
+          </div>
         </div>
-        <div className="space-y-2">
-          <Label className="font-bangla">{t('phone')}</Label>
-          <Input placeholder="01XXXXXXXXX" type="tel" value={form.phone} onChange={e => updateField('phone', e.target.value)} />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label className="font-bangla text-muted-foreground ml-1 flex items-center gap-1"><MapPin className="w-4 h-4" /> Latitude</Label>
+            <Input type="number" step="any" className="h-12 rounded-xl bg-muted/30 border-none focus-visible:ring-primary/20" value={form.lat} onChange={e => updateField('lat', e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label className="font-bangla text-muted-foreground ml-1">Longitude</Label>
+            <Input type="number" step="any" className="h-12 rounded-xl bg-muted/30 border-none focus-visible:ring-primary/20" value={form.lng} onChange={e => updateField('lng', e.target.value)} />
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="space-y-2">
-          <Label className="font-bangla">{t('division')}</Label>
-          <Select value={form.division} onValueChange={v => updateField('division', v)} required>
-            <SelectTrigger className="font-bangla"><SelectValue placeholder={t('division')} /></SelectTrigger>
-            <SelectContent>
-              {divisions.map(d => (
-                <SelectItem key={d.en} value={d.en} className="font-bangla">{lang === 'bn' ? d.bn : d.en}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      {/* Timing & Pricing */}
+      <div className="bg-card border border-border/50 rounded-[32px] p-6 md:p-8 space-y-6 shadow-sm">
+        <h2 className="text-xl font-bold font-bangla text-primary flex items-center gap-2">
+          <span className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm">৩</span>
+          সময় এবং মূল্য
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label className="font-bangla text-muted-foreground ml-1 flex items-center gap-1"><Clock className="w-4 h-4" /> {t('openTime')}</Label>
+            <Input type="time" className="h-12 rounded-xl bg-muted/30 border-none focus-visible:ring-primary/20" value={form.open_time} onChange={e => updateField('open_time', e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label className="font-bangla text-muted-foreground ml-1 flex items-center gap-1"><Clock className="w-4 h-4" /> {t('closeTime')}</Label>
+            <Input type="time" className="h-12 rounded-xl bg-muted/30 border-none focus-visible:ring-primary/20" value={form.close_time} onChange={e => updateField('close_time', e.target.value)} />
+          </div>
         </div>
-        <div className="space-y-2">
-          <Label className="font-bangla">{t('district')}</Label>
-          <Input placeholder={t('district')} className="font-bangla" value={form.district} onChange={e => updateField('district', e.target.value)} required />
-        </div>
-        <div className="space-y-2">
-          <Label className="font-bangla">{t('upazila')}</Label>
-          <Input placeholder={t('upazila')} className="font-bangla" value={form.upazila} onChange={e => updateField('upazila', e.target.value)} />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label className="font-bangla text-muted-foreground ml-1">{t('teaPrice')} ({t('taka')} min)</Label>
+            <Input type="number" className="h-12 rounded-xl bg-muted/30 border-none focus-visible:ring-primary/20" value={form.tea_price_min} onChange={e => updateField('tea_price_min', e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label className="font-bangla text-muted-foreground ml-1">{t('teaPrice')} ({t('taka')} max)</Label>
+            <Input type="number" className="h-12 rounded-xl bg-muted/30 border-none focus-visible:ring-primary/20" value={form.tea_price_max} onChange={e => updateField('tea_price_max', e.target.value)} />
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label className="font-bangla flex items-center gap-1"><Clock className="w-4 h-4" /> {t('openTime')}</Label>
-          <Input type="time" value={form.open_time} onChange={e => updateField('open_time', e.target.value)} />
+      {/* Description & Photo */}
+      <div className="bg-card border border-border/50 rounded-[32px] p-6 md:p-8 space-y-6 shadow-sm">
+        <h2 className="text-xl font-bold font-bangla text-primary flex items-center gap-2">
+          <span className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm">৪</span>
+          বিস্তারিত এবং ছবি
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label className="font-bangla text-muted-foreground ml-1">{t('descriptionBn')}</Label>
+            <Textarea placeholder="বাংলায় বিবরণ লিখুন..." className="font-bangla rounded-2xl bg-muted/30 border-none focus-visible:ring-primary/20 resize-none" rows={4} value={form.description_bn} onChange={e => updateField('description_bn', e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label className="font-bangla text-muted-foreground ml-1">{t('descriptionEn')}</Label>
+            <Textarea placeholder="Write description in English..." className="rounded-2xl bg-muted/30 border-none focus-visible:ring-primary/20 resize-none" rows={4} value={form.description_en} onChange={e => updateField('description_en', e.target.value)} />
+          </div>
         </div>
+
         <div className="space-y-2">
-          <Label className="font-bangla flex items-center gap-1"><Clock className="w-4 h-4" /> {t('closeTime')}</Label>
-          <Input type="time" value={form.close_time} onChange={e => updateField('close_time', e.target.value)} />
+          <Label className="font-bangla text-muted-foreground ml-1 flex items-center gap-1"><Camera className="w-4 h-4" /> {lang === 'bn' ? 'দোকানের ছবি' : 'Stall Photo'}</Label>
+          <div className="relative group cursor-pointer h-32 md:h-40 rounded-3xl bg-muted/30 border-2 border-dashed border-border/50 flex flex-col items-center justify-center transition-colors hover:bg-primary/5 hover:border-primary/50 overflow-hidden">
+            <Camera className="w-8 h-8 text-muted-foreground mb-2 group-hover:text-primary transition-colors" />
+            <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors font-bangla">{lang === 'bn' ? 'ছবি আপলোড করতে ক্লিক করুন' : 'Click to upload photo'}</span>
+            <Input id="stall-image" type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer h-full" />
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label className="font-bangla">{t('teaPrice')} ({t('taka')} min)</Label>
-          <Input type="number" value={form.tea_price_min} onChange={e => updateField('tea_price_min', e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label className="font-bangla">{t('teaPrice')} ({t('taka')} max)</Label>
-          <Input type="number" value={form.tea_price_max} onChange={e => updateField('tea_price_max', e.target.value)} />
-        </div>
-      </div>
+      {/* Facilities */}
+      <div className="bg-card border border-border/50 rounded-[32px] p-6 md:p-8 space-y-6 shadow-sm">
+        <h2 className="text-xl font-bold font-bangla text-primary flex items-center gap-2">
+          <span className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm">৫</span>
+          {t('facilities')}
+        </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label className="font-bangla">{t('descriptionBn')}</Label>
-          <Textarea placeholder="বাংলায় বিবরণ লিখুন..." className="font-bangla" rows={3} value={form.description_bn} onChange={e => updateField('description_bn', e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label className="font-bangla">{t('descriptionEn')}</Label>
-          <Textarea placeholder="Write description in English..." rows={3} value={form.description_en} onChange={e => updateField('description_en', e.target.value)} />
-        </div>
-      </div>
-
-      {/* Lat/Lng */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label className="font-bangla flex items-center gap-1"><MapPin className="w-4 h-4" /> Latitude</Label>
-          <Input type="number" step="any" value={form.lat} onChange={e => updateField('lat', e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label className="font-bangla">Longitude</Label>
-          <Input type="number" step="any" value={form.lng} onChange={e => updateField('lng', e.target.value)} />
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label className="font-bangla flex items-center gap-1"><Camera className="w-4 h-4" /> {lang === 'bn' ? 'দোকানের ছবি' : 'Stall Photo'}</Label>
-        <Input id="stall-image" type="file" accept="image/*" className="cursor-pointer" />
-      </div>
-
-      <div className="space-y-3">
-        <Label className="font-bangla">{t('facilities')}</Label>
-        <div className="flex flex-wrap gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {facilityOptions.map(f => (
-            <label key={f.key} className={`flex items-center gap-2 px-4 py-2 rounded-lg border cursor-pointer transition-colors ${facilities.includes(f.key) ? 'bg-primary/10 border-primary text-primary' : 'bg-card border-border hover:border-primary/50'}`}>
-              <Checkbox checked={facilities.includes(f.key)} onCheckedChange={() => toggleFacility(f.key)} />
-              <span className="font-bangla text-sm">{f.icon} {f.label}</span>
+            <label key={f.key} className={`flex flex-col items-center justify-center p-4 rounded-2xl border transition-all cursor-pointer ${facilities.includes(f.key) ? 'bg-primary/10 border-primary shadow-lg shadow-primary/10' : 'bg-muted/30 border-transparent hover:border-primary/50'}`}>
+              <div className="text-2xl mb-2">{f.icon}</div>
+              <span className="font-bangla text-[10px] md:text-xs text-center font-bold">{f.label}</span>
+              <Checkbox checked={facilities.includes(f.key)} onCheckedChange={() => toggleFacility(f.key)} className="mt-2" />
             </label>
           ))}
         </div>
       </div>
 
-      <div className="flex gap-3 pt-4">
-        <Button type="submit" size="lg" className="font-bangla gap-2 flex-1 md:flex-none" disabled={loading}>
-          <Check className="w-4 h-4" />
+      <div className="flex flex-col md:flex-row gap-4 pt-10">
+        <Button type="submit" size="lg" className="font-bangla h-16 rounded-2xl text-lg flex-1 shadow-xl shadow-primary/20 gap-3" disabled={loading}>
+          {loading ? (
+            <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+          ) : (
+            <Check className="w-6 h-6" />
+          )}
           {loading ? (lang === 'bn' ? 'জমা হচ্ছে...' : 'Submitting...') : t('submit')}
         </Button>
-        <Button type="button" variant="outline" size="lg" className="font-bangla" onClick={() => navigate(-1)}>
+        <Button type="button" variant="outline" size="lg" className="font-bangla h-16 rounded-2xl text-lg border-border/50 hover:bg-muted" onClick={() => navigate(-1)}>
           {t('cancel')}
         </Button>
       </div>

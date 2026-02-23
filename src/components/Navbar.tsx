@@ -12,62 +12,68 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
 
+  const isMapPage = location.pathname === '/map';
+  const isTransparent = location.pathname === '/' || isMapPage;
+
   const navLinks = [
     { path: '/', label: t('home') },
     { path: '/map', label: t('map'), icon: <MapPin className="w-4 h-4 mr-1" /> },
     { path: '/add-stall', label: t('addStall'), icon: <Plus className="w-4 h-4 mr-1" /> },
+    { path: '/about', label: t('about'), icon: <User className="w-4 h-4 mr-1" /> },
   ];
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="text-2xl">🍵</span>
-          <span className="text-xl font-bold text-primary">{t('appName')}</span>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isTransparent ? 'bg-background/20 backdrop-blur-md border-transparent hover:bg-background/80 hover:border-border' : 'bg-background/80 backdrop-blur-lg border-b border-border'}`}>
+      <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+        <Link to="/" className="flex flex-col group gap-0">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl group-hover:scale-110 transition-transform">🍵</span>
+            <span className="text-xl md:text-2xl font-bold text-primary font-bangla tracking-tight leading-none">{t('appName')}</span>
+          </div>
+          <span className="text-[10px] md:text-xs font-bangla text-muted-foreground/80 mt-1 pl-8 lowercase tracking-wider leading-none">
+            {t('appSlogan')}
+          </span>
         </Link>
 
-        <div className="hidden md:flex items-center gap-4">
-          <div className="flex flex-center gap-1">
-            {navLinks.map(link => (
-              <Link key={link.path} to={link.path}>
-                <Button variant={isActive(link.path) ? 'default' : 'ghost'} size="sm" className="font-bangla">
-                  {link.icon}
-                  {link.label}
-                </Button>
-              </Link>
-            ))}
-          </div>
-          <div className="h-6 w-[1px] bg-border mx-2" />
-          <div className="flex flex-col items-end leading-none">
-            <span className="text-[10px] text-muted-foreground">By</span>
-            <span className="text-xs font-semibold text-primary">Samin Yasar Sunny</span>
-          </div>
+        <div className="hidden lg:flex items-center gap-1">
+          {navLinks.map(link => (
+            <Link key={link.path} to={link.path}>
+              <Button
+                variant={isActive(link.path) ? 'default' : 'ghost'}
+                size="sm"
+                className={`font-bangla rounded-xl transition-all ${isActive(link.path) ? 'shadow-lg shadow-primary/20' : ''}`}
+              >
+                {link.icon}
+                {link.label}
+              </Button>
+            </Link>
+          ))}
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={toggleLang} className="font-bangla text-xs">
-            <Globe className="w-3.5 h-3.5 mr-1" />
+          <Button variant="outline" size="sm" onClick={toggleLang} className="font-bangla text-xs rounded-xl h-10 px-4 bg-background/50 border-border/50">
+            <Globe className="w-4 h-4 mr-2" />
             {lang === 'bn' ? 'English' : 'বাংলা'}
           </Button>
 
           {user ? (
-            <Button variant="ghost" size="sm" onClick={signOut} className="hidden md:flex font-bangla text-xs gap-1">
-              <LogOut className="w-3.5 h-3.5" />
+            <Button variant="ghost" size="sm" onClick={signOut} className="hidden md:flex font-bangla text-xs gap-1 h-10 rounded-xl hover:bg-destructive/10 hover:text-destructive transition-colors">
+              <LogOut className="w-4 h-4" />
               {lang === 'bn' ? 'লগআউট' : 'Logout'}
             </Button>
           ) : (
             <Link to="/auth">
-              <Button variant="ghost" size="sm" className="hidden md:flex font-bangla text-xs gap-1">
-                <LogIn className="w-3.5 h-3.5" />
+              <Button variant="ghost" size="sm" className="hidden md:flex font-bangla text-xs gap-1 h-10 rounded-xl hover:bg-primary/10 transition-colors">
+                <LogIn className="w-4 h-4" />
                 {t('login')}
               </Button>
             </Link>
           )}
 
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          <Button variant="ghost" size="icon" className="md:hidden h-10 w-10 bg-background/50 backdrop-blur-md rounded-xl" onClick={() => setMobileOpen(!mobileOpen)}>
+            {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </Button>
         </div>
       </div>
@@ -75,37 +81,34 @@ const Navbar = () => {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-background border-b border-border overflow-hidden"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="md:hidden bg-background/95 backdrop-blur-xl border-b border-border shadow-2xl overflow-hidden"
           >
-            <div className="px-4 py-3 flex flex-col gap-1">
+            <div className="px-6 py-8 flex flex-col gap-3">
               {navLinks.map(link => (
                 <Link key={link.path} to={link.path} onClick={() => setMobileOpen(false)}>
-                  <Button variant={isActive(link.path) ? 'default' : 'ghost'} className="w-full justify-start font-bangla">
+                  <Button variant={isActive(link.path) ? 'default' : 'ghost'} className="w-full justify-start font-bangla h-14 rounded-2xl text-lg">
                     {link.label}
                   </Button>
                 </Link>
               ))}
+              <div className="h-[1px] bg-border/50 my-2" />
               {user ? (
-                <Button variant="ghost" onClick={() => { signOut(); setMobileOpen(false); }} className="w-full justify-start font-bangla gap-1">
-                  <LogOut className="w-4 h-4" /> {lang === 'bn' ? 'লগআউট' : 'Logout'}
+                <Button variant="destructive" onClick={() => { signOut(); setMobileOpen(false); }} className="w-full justify-start font-bangla gap-2 h-14 rounded-2xl text-lg">
+                  <LogOut className="w-5 h-5" /> {lang === 'bn' ? 'লগআউট' : 'Logout'}
                 </Button>
               ) : (
                 <Link to="/auth" onClick={() => setMobileOpen(false)}>
-                  <Button variant="ghost" className="w-full justify-start font-bangla gap-1">
-                    <LogIn className="w-4 h-4" /> {t('login')}
+                  <Button variant="ghost" className="w-full justify-start font-bangla gap-2 h-14 rounded-2xl text-lg hover:bg-primary/10">
+                    <LogIn className="w-5 h-5" /> {t('login')}
                   </Button>
                 </Link>
               )}
             </div>
           </motion.div>
         )}
-        <div className="flex flex-col items-center gap-1 border-t border-border pt-4 mt-2">
-          <p className="text-[10px] text-muted-foreground">Created by</p>
-          <p className="text-xs font-bold text-primary">Samin Yasar Sunny</p>
-        </div>
       </AnimatePresence>
     </nav>
   );

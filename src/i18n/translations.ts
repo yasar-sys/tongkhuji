@@ -2,12 +2,14 @@ export type Language = 'bn' | 'en';
 
 export const translations = {
   bn: {
-    appName: 'টঙ বিডি',
+    appName: 'টঙ খুঁজি',
+    appSlogan: 'চায়ের কাপে দেশ গড়ি',
     appTagline: 'বাংলাদেশের টঙ মানচিত্র',
     appDescription: 'বাংলাদেশের সেরা চায়ের দোকানগুলো খুঁজে বের করুন, রিভিউ দিন এবং শেয়ার করুন।',
     home: 'হোম',
     map: 'মানচিত্র',
     addStall: 'টঙ যোগ করুন',
+    about: 'সম্পর্কে',
     login: 'লগইন',
     signup: 'সাইন আপ',
     profile: 'প্রোফাইল',
@@ -62,12 +64,14 @@ export const translations = {
     perCup: '/কাপ',
   },
   en: {
-    appName: 'TongBD',
+    appName: 'Tong Khuji',
+    appSlogan: 'Building the Nation Over a Cup of Tea',
     appTagline: 'Bangladesh Tea Stall Map',
     appDescription: 'Discover, review, and share the best tea stalls across Bangladesh.',
     home: 'Home',
     map: 'Map',
     addStall: 'Add Stall',
+    about: 'About',
     login: 'Login',
     signup: 'Sign Up',
     profile: 'Profile',

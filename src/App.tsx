@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import MapPage from "./pages/MapPage";
 import AddStallPage from "./pages/AddStallPage";
 import AuthPage from "./pages/AuthPage";
+import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/map" element={<MapPage />} />
               <Route path="/add-stall" element={<AddStallPage />} />
+              <Route path="/about" element={<About />} />
               <Route path="/auth" element={<AuthPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

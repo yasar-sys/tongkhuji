@@ -89,10 +89,16 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-4 border-t border-border">
+      <footer className="py-12 px-4 border-t border-border bg-muted/30">
         <div className="container mx-auto text-center">
-          <p className="text-sm text-muted-foreground font-bangla">
-            © 2026 {t('appName')} — {t('appTagline')}
+          <div className="mb-4">
+            <span className="text-2xl">🍵</span>
+          </div>
+          <p className="text-sm font-bold text-foreground font-bangla mb-2">
+            {t('appName')} — {t('appSlogan')}
+          </p>
+          <p className="text-xs text-muted-foreground font-bangla italic opacity-70">
+            {t('appTagline')}
           </p>
         </div>
       </footer>
