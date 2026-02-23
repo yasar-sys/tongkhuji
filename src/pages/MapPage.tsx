@@ -10,7 +10,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 const MapPage = () => {
   const { lang } = useLanguage();
-  const [selectedDivision] = useState('all');
+  const [selectedDivision, setSelectedDivision] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const { data: dbStalls } = useTeaStalls(selectedDivision);
 
@@ -36,6 +36,9 @@ const MapPage = () => {
     : sampleStalls;
 
   const stalls = rawStalls.filter(s => {
+    // If using sampleStalls, we need to filter by division manually here as well
+    if (!dbStalls && selectedDivision !== 'all' && s.division !== selectedDivision) return false;
+
     const name = lang === 'bn' ? s.name_bn : s.name_en;
     const location = `${s.upazila} ${s.district} ${s.division}`;
     const query = searchQuery.toLowerCase();
@@ -51,7 +54,11 @@ const MapPage = () => {
       <div className="relative w-full h-full">
         <MapView stalls={stalls} className="h-full w-full" />
 
-        <FloatingSearchBar onSearchChange={setSearchQuery} />
+        <FloatingSearchBar
+          onSearchChange={setSearchQuery}
+          selectedDivision={selectedDivision}
+          onDivisionChange={setSelectedDivision}
+        />
 
         <FloatingMapControls
           onLocateMe={() => {
