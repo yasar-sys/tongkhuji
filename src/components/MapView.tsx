@@ -38,10 +38,27 @@ const MapView = ({ stalls, className = '', onStallSelect }: MapViewProps) => {
         maxZoom: 19,
       }).addTo(map);
 
-      // Click to add stall
+      // Click to add stall with confirmation popup
       map.on('click', (e: any) => {
         const { lat, lng } = e.latlng;
-        navigate(`/add-stall?lat=${lat.toFixed(6)}&lng=${lng.toFixed(6)}`);
+        const popup = L.popup()
+          .setLatLng(e.latlng)
+          .setContent(`
+            <div style="font-family:'Hind Siliguri',sans-serif;text-align:center;padding:4px;">
+              <p style="margin:0 0 8px;font-size:13px;font-weight:600;">📍 ${lang === 'bn' ? 'এখানে দোকান যোগ করুন?' : 'Add stall here?'}</p>
+              <p style="margin:0 0 8px;font-size:11px;color:#888;">${lat.toFixed(5)}, ${lng.toFixed(5)}</p>
+              <button id="add-stall-btn" style="background:linear-gradient(135deg,#2d7a3a,#1a5c28);color:white;border:none;padding:6px 16px;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer;">
+                🍵 ${lang === 'bn' ? 'যোগ করুন' : 'Add Stall'}
+              </button>
+            </div>
+          `)
+          .openOn(map);
+
+        setTimeout(() => {
+          document.getElementById('add-stall-btn')?.addEventListener('click', () => {
+            navigate(`/add-stall?lat=${lat.toFixed(6)}&lng=${lng.toFixed(6)}`);
+          });
+        }, 100);
       });
 
       // Add markers

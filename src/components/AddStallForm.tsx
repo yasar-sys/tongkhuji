@@ -37,10 +37,43 @@ const AddStallForm = () => {
     lng: searchParams.get('lng') || '90.4125',
   });
 
+  const [geoLoading, setGeoLoading] = useState(false);
+
+  // Reverse geocode to auto-fill division/district/upazila
+  const reverseGeocode = async (lat: string, lng: string) => {
+    setGeoLoading(true);
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=en&zoom=14`);
+      const data = await res.json();
+      const addr = data.address || {};
+      
+      // Map state/region to our division list
+      const state = (addr.state || '').replace(' Division', '');
+      const matchedDivision = divisions.find(d => 
+        d.en.toLowerCase() === state.toLowerCase() || 
+        d.bn === state
+      );
+
+      setForm(prev => ({
+        ...prev,
+        lat, lng,
+        division: matchedDivision?.en || prev.division,
+        district: addr.county || addr.city || addr.town || prev.district,
+        upazila: addr.suburb || addr.town || addr.village || prev.upazila,
+      }));
+    } catch {
+      // silently fail, user can fill manually
+    } finally {
+      setGeoLoading(false);
+    }
+  };
+
   useEffect(() => {
     const lat = searchParams.get('lat');
     const lng = searchParams.get('lng');
-    if (lat && lng) setForm(prev => ({ ...prev, lat, lng }));
+    if (lat && lng) {
+      reverseGeocode(lat, lng);
+    }
   }, [searchParams]);
 
   const updateField = (key: string, value: string) => setForm(prev => ({ ...prev, [key]: value }));
@@ -171,6 +204,7 @@ const AddStallForm = () => {
         <h2 className="text-lg md:text-xl font-bold font-bangla text-primary flex items-center gap-2">
           <span className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs md:text-sm">২</span>
           <MapPin className="w-4 h-4" /> {lang === 'bn' ? 'অবস্থান' : 'Location'}
+          {geoLoading && <span className="ml-2 text-xs text-muted-foreground animate-pulse font-normal">{lang === 'bn' ? '📍 লোকেশন খোঁজা হচ্ছে...' : '📍 Detecting location...'}</span>}
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
