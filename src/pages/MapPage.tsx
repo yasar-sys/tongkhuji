@@ -12,14 +12,14 @@ const MapPage = () => {
   const { lang } = useLanguage();
   const [selectedDivision, setSelectedDivision] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const { data: dbStalls } = useTeaStalls(selectedDivision);
+  const { data: dbStalls, isLoading } = useTeaStalls(selectedDivision);
 
   // Use DB stalls if available, otherwise show sample data
   const rawStalls: TeaStallDisplay[] = dbStalls && dbStalls.length > 0
     ? dbStalls.map((s: any) => ({
       ...s,
-      rating: 4.5, // Default rating as placeholder
-      review_count: 12,
+      rating: s.rating ?? 4.5,
+      review_count: s.review_count ?? 0,
       image_url: s.image_url || '',
       is_open: true,
       tea_price_min: s.tea_price_min ?? 10,
@@ -36,9 +36,7 @@ const MapPage = () => {
     : sampleStalls;
 
   const stalls = rawStalls.filter(s => {
-    // If using sampleStalls, we need to filter by division manually here as well
     if (!dbStalls && selectedDivision !== 'all' && s.division !== selectedDivision) return false;
-
     const name = lang === 'bn' ? s.name_bn : s.name_en;
     const location = `${s.upazila} ${s.district} ${s.division}`;
     const query = searchQuery.toLowerCase();
@@ -46,13 +44,16 @@ const MapPage = () => {
   });
 
   const handleStallClick = useCallback((stall: TeaStallDisplay) => {
-    window.location.href = `/map?lat=${stall.lat}&lng=${stall.lng}`;
+    const url = new URL(window.location.href);
+    url.searchParams.set('lat', String(stall.lat));
+    url.searchParams.set('lng', String(stall.lng));
+    window.location.href = url.toString();
   }, []);
 
   return (
-    <div className="h-screen w-full flex flex-col overflow-hidden bg-background">
+    <div className="h-[100dvh] w-full flex flex-col overflow-hidden bg-background">
       {/* Search Header */}
-      <div className="z-[2000] border-b border-border/10 bg-background/80 backdrop-blur-md">
+      <div className="z-[2000] bg-background/60 backdrop-blur-md safe-area-top">
         <FloatingSearchBar
           onSearchChange={setSearchQuery}
           selectedDivision={selectedDivision}
@@ -61,22 +62,33 @@ const MapPage = () => {
       </div>
 
       <div className="relative flex-1 w-full overflow-hidden">
-        <MapView stalls={stalls} className="h-full w-full" />
+        {isLoading && (
+          <div className="absolute inset-0 z-[999] flex items-center justify-center bg-background/50 backdrop-blur-sm">
+            <div className="flex flex-col items-center gap-3">
+              <span className="text-4xl animate-bounce">🍵</span>
+              <p className="font-bangla text-muted-foreground text-sm">
+                {lang === 'bn' ? 'লোড হচ্ছে...' : 'Loading...'}
+              </p>
+            </div>
+          </div>
+        )}
+
+        <MapView stalls={stalls} className="h-full w-full" onStallSelect={handleStallClick} />
 
         <FloatingMapControls
           onLocateMe={() => {
-            if ("geolocation" in navigator) {
+            if ('geolocation' in navigator) {
               navigator.geolocation.getCurrentPosition((pos) => {
-                window.location.href = `/map?lat=${pos.coords.latitude}&lng=${pos.coords.longitude}`;
+                const url = new URL(window.location.href);
+                url.searchParams.set('lat', String(pos.coords.latitude));
+                url.searchParams.set('lng', String(pos.coords.longitude));
+                window.location.href = url.toString();
               });
             }
           }}
         />
 
-        <StallBottomSheet
-          stalls={stalls}
-          onStallClick={handleStallClick}
-        />
+        <StallBottomSheet stalls={stalls} onStallClick={handleStallClick} />
       </div>
     </div>
   );

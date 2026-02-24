@@ -1,140 +1,143 @@
-import { useRef, useState } from 'react';
-import { motion, useDragControls } from 'framer-motion';
-import { Share2, Navigation, MessageSquare, Star, MapPin } from 'lucide-react';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Navigation, MapPin, Clock, ChevronUp, ChevronDown } from 'lucide-react';
 import { TeaStallDisplay } from './StallCard';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
 interface StallBottomSheetProps {
-    stalls: TeaStallDisplay[];
-    onStallClick?: (stall: TeaStallDisplay) => void;
+  stalls: TeaStallDisplay[];
+  onStallClick?: (stall: TeaStallDisplay) => void;
 }
 
 const StallBottomSheet = ({ stalls, onStallClick }: StallBottomSheetProps) => {
-    const { lang, t } = useLanguage();
-    const [snapPoint, setSnapPoint] = useState<'collapsed' | 'half' | 'expanded'>('half');
+  const { lang, t } = useLanguage();
+  const [snapPoint, setSnapPoint] = useState<'collapsed' | 'half' | 'expanded'>('collapsed');
 
-    const variants = {
-        collapsed: { y: 'calc(100% - 80px)' },
-        half: { y: '50%' },
-        expanded: { y: '10%' }
-    };
+  const variants = {
+    collapsed: { y: 'calc(100% - 72px)' },
+    half: { y: '50%' },
+    expanded: { y: '8%' },
+  };
 
-    const handleDragEnd = (event: any, info: any) => {
-        const velocity = info.velocity.y;
-        const offset = info.offset.y;
+  const handleDragEnd = (_: any, info: any) => {
+    const velocity = info.velocity.y;
+    const offset = info.offset.y;
+    if (velocity > 400 || offset > 80) {
+      setSnapPoint(snapPoint === 'expanded' ? 'half' : 'collapsed');
+    } else if (velocity < -400 || offset < -80) {
+      setSnapPoint(snapPoint === 'collapsed' ? 'half' : 'expanded');
+    }
+  };
 
-        if (velocity > 500 || offset > 100) {
-            if (snapPoint === 'expanded') setSnapPoint('half');
-            else setSnapPoint('collapsed');
-        } else if (velocity < -500 || offset < -100) {
-            if (snapPoint === 'collapsed') setSnapPoint('half');
-            else setSnapPoint('expanded');
-        }
-    };
+  const toggleSheet = () => {
+    setSnapPoint(prev => prev === 'collapsed' ? 'half' : prev === 'half' ? 'expanded' : 'collapsed');
+  };
 
-    const listHeader = (
-        <div className="flex items-center justify-between py-4 border-b border-border/10">
-            <div className="flex items-center gap-2">
-                <div className="bg-primary/10 p-2 rounded-xl">
-                    <MapPin className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                    <h2 className="text-lg font-bold font-bangla text-foreground">
-                        {lang === 'bn' ? `আশেপাশে ${stalls.length}টি টঙ` : `Nearby ${stalls.length} stalls`}
-                    </h2>
-                </div>
-            </div>
-            <div className="flex items-center gap-1.5 bg-green-500/10 text-green-600 px-3 py-1 rounded-full text-xs font-bold">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                LIVE
-            </div>
+  return (
+    <motion.div
+      variants={variants}
+      initial="collapsed"
+      animate={snapPoint}
+      drag="y"
+      dragConstraints={{ top: 0, bottom: 0 }}
+      dragElastic={0.05}
+      onDragEnd={handleDragEnd}
+      className="absolute bottom-0 left-0 right-0 z-[1001] bg-background/95 backdrop-blur-xl rounded-t-[28px] shadow-[0_-8px_30px_rgba(0,0,0,0.15)] border-t border-border/30 h-[92vh] overflow-hidden flex flex-col"
+    >
+      {/* Handle */}
+      <div 
+        className="w-full flex justify-center pt-2.5 pb-1.5 cursor-grab active:cursor-grabbing"
+        onClick={toggleSheet}
+      >
+        <div className="w-12 h-1.5 bg-border/60 rounded-full" />
+      </div>
+
+      {/* Header */}
+      <div className="px-4 pb-3 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className="bg-primary/10 p-2 rounded-xl">
+            <MapPin className="w-4 h-4 text-primary" />
+          </div>
+          <div>
+            <h2 className="text-sm font-bold font-bangla text-foreground leading-tight">
+              {lang === 'bn' ? `${stalls.length}টি টঙ পাওয়া গেছে` : `${stalls.length} stalls found`}
+            </h2>
+          </div>
         </div>
-    );
+        <button onClick={toggleSheet} className="p-2 rounded-xl bg-muted/50 text-muted-foreground">
+          {snapPoint === 'collapsed' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+        </button>
+      </div>
 
-    return (
-        <motion.div
-            variants={variants}
-            initial="half"
-            animate={snapPoint}
-            drag="y"
-            dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={0.05}
-            onDragEnd={handleDragEnd}
-            className="absolute bottom-0 left-0 right-0 z-[1001] bg-background/95 backdrop-blur-xl rounded-t-[40px] shadow-[0_-20px_50px_rgba(0,0,0,0.2)] border-t border-border/50 h-[90vh] overflow-hidden flex flex-col transition-shadow duration-300"
-        >
-            {/* Handle */}
-            <div className="w-full flex justify-center pt-3 pb-1 cursor-grab active:cursor-grabbing">
-                <div className="w-16 h-1.5 bg-border rounded-full" />
-            </div>
+      {/* Stall List */}
+      <div className="px-4 flex-1 overflow-y-auto pb-24">
+        <div className="space-y-3">
+          {stalls.map((stall) => (
+            <div
+              key={stall.id}
+              onClick={() => onStallClick?.(stall)}
+              className="bg-card hover:bg-muted/30 transition-all p-3 rounded-2xl border border-border/30 shadow-sm flex gap-3 cursor-pointer active:scale-[0.98]"
+            >
+              {/* Thumbnail */}
+              <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden bg-muted flex-shrink-0">
+                {stall.image_url ? (
+                  <img src={stall.image_url} alt={stall.name_bn} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-gradient-hero flex items-center justify-center">
+                    <span className="text-2xl">🍵</span>
+                  </div>
+                )}
+              </div>
 
-            <div className="px-6 flex-1 overflow-y-auto pb-20 custom-scrollbar">
-                {listHeader}
-
-                <div className="py-4 space-y-4">
-                    {stalls.map((stall, index) => (
-                        <div
-                            key={stall.id}
-                            onClick={() => onStallClick?.(stall)}
-                            className="group bg-background hover:bg-muted/30 transition-colors p-4 rounded-3xl border border-border/50 shadow-sm flex gap-4 cursor-pointer relative"
-                        >
-                            {/* Thumbnail */}
-                            <div className="relative">
-                                <div className="w-20 h-20 rounded-2xl overflow-hidden bg-muted flex items-center justify-center border border-border/50">
-                                    {stall.image_url ? (
-                                        <img src={stall.image_url} alt={stall.name_bn} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <div className="w-full h-full bg-gradient-hero flex items-center justify-center opacity-50">
-                                            <span className="text-3xl">🍵</span>
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="absolute -bottom-2 -left-2 bg-background/95 backdrop-blur-sm px-2 py-0.5 rounded-lg border border-border shadow-sm">
-                                    <span className="text-[10px] font-bold text-muted-foreground">{index === 0 ? '1.5km' : index === 1 ? '1.6km' : '2.0km'}</span>
-                                </div>
-                            </div>
-
-                            {/* Content */}
-                            <div className="flex-1 min-w-0">
-                                <div className="flex justify-between items-start gap-2">
-                                    <h3 className="font-bold text-base text-foreground truncate font-bangla leading-tight pr-8">
-                                        {lang === 'bn' ? stall.name_bn : stall.name_en}
-                                    </h3>
-                                    <div className="absolute right-16 top-4 flex items-center gap-1 bg-accent/10 px-2 py-0.5 rounded-lg border border-accent/20">
-                                        <span className="text-[10px] font-bold text-accent">{stall.rating || (3.5 + Math.random() * 1.5).toFixed(1)}</span>
-                                    </div>
-                                </div>
-
-                                <p className="text-[11px] text-muted-foreground truncate mb-2 font-bangla">
-                                    {stall.upazila}, {stall.district}
-                                </p>
-
-                                <div className="flex flex-wrap gap-2">
-                                    <div className="flex items-center gap-1 bg-primary/5 text-primary px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider">
-                                        {lang === 'bn' ? 'ফ্রি ওয়াইফাই' : 'Free Wifi'}
-                                    </div>
-                                    <div className="flex items-center gap-1 bg-blue-500/5 text-blue-600 px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider">
-                                        {lang === 'bn' ? '২৪ ঘণ্টা' : '24h'}
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Quick Actions */}
-                            <div className="flex flex-col gap-2 justify-center ml-2">
-                                <Button size="icon" variant="ghost" className="h-10 w-10 text-primary-foreground bg-blue-600 hover:bg-blue-700 rounded-2xl">
-                                    <Navigation className="w-5 h-5 fill-current" />
-                                </Button>
-                                <Button size="icon" variant="ghost" className="h-10 w-10 text-muted-foreground bg-muted hover:bg-muted/80 rounded-2xl">
-                                    <MessageSquare className="w-4 h-4" />
-                                </Button>
-                            </div>
-                        </div>
-                    ))}
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <h3 className="font-bold text-sm text-foreground truncate font-bangla leading-tight">
+                  {lang === 'bn' ? stall.name_bn : stall.name_en}
+                </h3>
+                <p className="text-[11px] text-muted-foreground truncate mb-1 font-bangla">
+                  📍 {stall.upazila ? `${stall.upazila}, ` : ''}{stall.district}
+                </p>
+                <div className="flex items-center gap-2 text-[11px]">
+                  <span className="text-primary font-bold">৳{stall.tea_price_min}–{stall.tea_price_max}</span>
+                  {stall.open_time && (
+                    <span className="text-muted-foreground flex items-center gap-0.5">
+                      <Clock className="w-3 h-3" /> {stall.open_time}–{stall.close_time}
+                    </span>
+                  )}
                 </div>
+                {stall.facilities && stall.facilities.length > 0 && (
+                  <div className="flex gap-1 mt-1.5 flex-wrap">
+                    {stall.facilities.slice(0, 3).map((f) => (
+                      <span key={f} className="bg-primary/5 text-primary px-1.5 py-0.5 rounded-md text-[9px] font-bold">
+                        {f}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Nav Button */}
+              <div className="flex items-center">
+                <Button size="icon" variant="ghost" className="h-9 w-9 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl">
+                  <Navigation className="w-4 h-4 fill-current" />
+                </Button>
+              </div>
             </div>
-        </motion.div>
-    );
+          ))}
+
+          {stalls.length === 0 && (
+            <div className="text-center py-12">
+              <span className="text-4xl block mb-3">🍵</span>
+              <p className="text-muted-foreground font-bangla text-sm">
+                {lang === 'bn' ? 'কোনো টঙ পাওয়া যায়নি' : 'No stalls found'}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
 };
 
 export default StallBottomSheet;

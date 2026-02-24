@@ -160,3 +160,52 @@
   font-size: 28px;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
+
+/* Tea popup styling */
+.tea-popup .leaflet-popup-content-wrapper {
+  border-radius: 16px !important;
+  padding: 0 !important;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15) !important;
+}
+
+.tea-popup .leaflet-popup-content {
+  margin: 0 !important;
+  width: auto !important;
+}
+
+.tea-popup .leaflet-popup-tip {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 4px;
+}
+
+/* Safe area for mobile notch */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Ping animation for markers */
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Hide leaflet default controls on mobile */
+@media (max-width: 768px) {
+  .leaflet-control-zoom {
+    display: none !important;
+  }
+}
